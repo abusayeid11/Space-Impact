@@ -44,13 +44,25 @@ int main()
        double backgroundX2=765;
        double ufoX1 = 800;
        double ufoX2,ufoX3;
-    SoundBuffer  bulletsoundbuffer;
+    SoundBuffer  bulletsoundbuffer,bulletsoundbuffer2,bulletsoundbuffer3;
        if(!bulletsoundbuffer.loadFromFile("bullet.WAV"));
        {
            cout<<"BULLET";
        }
-       Sound bulletsound;
+      
        bulletsound.setBuffer(bulletsoundbuffer);
+     if(!bulletsoundbuffer2.loadFromFile("blast.WAV"));
+       {
+           cout<<"BULLET";
+       }
+        if(!bulletsoundbuffer3.loadFromFile("blast2.WAV"));
+       {
+           cout<<"BULLET";
+       }
+    Sound bulletsound,bulletsound2,bulletsound3;
+       bulletsound.setBuffer(bulletsoundbuffer);
+        bulletsound2.setBuffer(bulletsoundbuffer2);
+        bulletsound3.setBuffer(bulletsoundbuffer3);
 
    Clock cloack;
     while(Window.isOpen()){
@@ -149,9 +161,10 @@ int main()
                      coll2.setPosition(bullarray[i].first+5,bullarray[i].second+5);
                       coll3.setPosition(bullarray[i].first-4,bullarray[i].second-4);
 
-
+                       bulletsound2.play();
                    for(int j=0;j<35;j++){
                    Window.draw(collision);
+                      
 
                    Window.display();}
                     /* for(int j=0;j<20;j++){
@@ -160,6 +173,7 @@ int main()
                      }*/
                   for(int j=0;j<35;j++){
                     Window.draw(coll3);
+                     
                    Window.display();
                   }
 
@@ -199,13 +213,16 @@ int main()
                        ufo1.setPosition(900,rand()%500);
            ufoX1 = 900;
            SpriteSheet.setPosition(0,0);
+              bulletsound3.play();
              for(int j=0;j<35;j++){
                    Window.draw(collision);
+                
 
                    Window.display();}
 
                   for(int j=0;j<35;j++){
                     Window.draw(coll3);
+                     
                    Window.display();
                   }
           }
