@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include<SFML/Graphics.hpp>
+#include<SFML/Audio.hpp>
 #include<fstream>
 using namespace std;
 using namespace sf;
@@ -43,6 +44,13 @@ int main()
        double backgroundX2=765;
        double ufoX1 = 800;
        double ufoX2,ufoX3;
+    SoundBuffer  bulletsoundbuffer;
+       if(!bulletsoundbuffer.loadFromFile("bullet.WAV"));
+       {
+           cout<<"BULLET";
+       }
+       Sound bulletsound;
+       bulletsound.setBuffer(bulletsoundbuffer);
 
    Clock cloack;
     while(Window.isOpen()){
@@ -52,6 +60,8 @@ int main()
                 Window.close();
             }
              if(Keyboard:: isKeyPressed(Keyboard::Space) ){
+                  if(Keyboard:: isKeyPressed(Keyboard::Space) ){
+                bulletsound.play();
                 bullarray.push_back(make_pair(SpriteSheet.getPosition().x + 10,SpriteSheet.getPosition().y+16));
             }
         }
