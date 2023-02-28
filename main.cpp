@@ -1,16 +1,17 @@
 #include <bits/stdc++.h>
 #include<SFML/Graphics.hpp>
 #include<SFML/Audio.hpp>
+#include "MainMenu.h"
 #include<fstream>
 using namespace std;
 using namespace sf;
-int wWidth = 800 , wHeight = 600;
+int wWidth = 800 , wHeight = 600,  life = 3,level = 0,N=1,score =0;
 vector<pair<double,double> > bullarray;
 int main()
 {
-    float x = 0;
+      float x = 0;
     float y = 0;
-    RenderWindow Window(VideoMode(wWidth,wHeight), "Space");
+
     Texture spaceship,bg,Ufo,firebul,collisiontxt,coll2txt,coll3txt;
     spaceship.loadFromFile("data/images/newship.png");
     bg.loadFromFile("data/images/newback.jpg");
@@ -44,13 +45,13 @@ int main()
        double backgroundX2=765;
        double ufoX1 = 800;
        double ufoX2,ufoX3;
-    SoundBuffer  bulletsoundbuffer,bulletsoundbuffer2,bulletsoundbuffer3;
+       SoundBuffer  bulletsoundbuffer,bulletsoundbuffer2,bulletsoundbuffer3;
        if(!bulletsoundbuffer.loadFromFile("bullet.WAV"));
        {
            cout<<"BULLET";
        }
-      
-       bulletsound.setBuffer(bulletsoundbuffer);
+
+
      if(!bulletsoundbuffer2.loadFromFile("blast.WAV"));
        {
            cout<<"BULLET";
@@ -64,21 +65,157 @@ int main()
         bulletsound2.setBuffer(bulletsoundbuffer2);
         bulletsound3.setBuffer(bulletsoundbuffer3);
 
-   Clock cloack;
-    while(Window.isOpen()){
+    RenderWindow MENU(VideoMode(wWidth,wHeight), "Space");
+    MainMenu mainMenu(MENU.getSize().x, MENU.getSize().y);
+    RectangleShape background;
+    background.setSize(Vector2f(wWidth,wHeight));
+    Texture Maintexture;
+    Maintexture.loadFromFile("data/images/menuBack.jpg");
+    //Sprite bg(Maintexture);
+    background.setTexture(&Maintexture);
+
+    //Texts
+     string lifestr = "Life:", scorestr ="Score:",gameoverstr = "Your Score: ";
+     Font font;
+       font.loadFromFile("data/font/Con1.ttf");
+       Text textscore, textlife,textgameover, textlevel, textlevelintro;
+       textscore.setFont(font);
+       textscore.setCharacterSize(30);
+       textscore.setColor(Color::White);
+       textscore.setStyle(Text::Bold);
+        textscore.setString(scorestr);
+        textscore.setPosition(10,550);
+
+
+        textlife.setFont(font);
+       textlife.setCharacterSize(30);
+       textlife.setColor(Color::White);
+       textlife.setStyle(Text::Bold);
+       textlife.setString(lifestr);
+        textlife.setPosition(600, 550);
+
+
+        textgameover.setFont(font);
+       textgameover.setCharacterSize(100);
+       textgameover.setColor(Color::White);
+       textgameover.setStyle(Text::Bold);
+       textgameover.setString(gameoverstr);
+        textgameover.setPosition(120, 350);
+
+        string levelstr = "LEVEL: ";
+       textlevel.setFont(font);
+      textlevel.setCharacterSize(100);
+       textlevel.setColor(Color::Blue);
+       textlevel.setStyle(Text::Bold);
+       textlevel.setString(levelstr);
+        textlevel.setPosition(120, 200);
+
+        string levelintrostr = "Press Up or Down to Change Level";
+         textlevelintro.setFont(font);
+      textlevelintro.setCharacterSize(50);
+       textlevelintro.setColor(Color::White);
+       textlevelintro.setStyle(Text::Bold);
+       textlevelintro.setString(levelintrostr);
+        textlevelintro.setPosition(30, 10);
+
+    while(MENU.isOpen()){
+
         Event event;
-        while(Window.pollEvent(event)){
+
+        while(MENU.pollEvent(event)){
+
             if(event.type == Event::Closed){
-                Window.close();
-            }
-             if(Keyboard:: isKeyPressed(Keyboard::Space) ){
-                  if(Keyboard:: isKeyPressed(Keyboard::Space) ){
-                bulletsound.play();
+                MENU.close();
+            } //modification
+            if(event.type == Event :: KeyReleased)
+            {
+                if(event.key.code == Keyboard :: Up)
+                {
+                    mainMenu.MoveUp();
+                    break;
+                }
+                if(event.key.code == Keyboard :: Down)
+                {
+                    mainMenu.MoveDown();
+                    break;
+                }
+                if(event.key.code == Keyboard :: Return)
+                {
+                   RenderWindow Play(VideoMode(800,600), "SPACE__IMAPACT");
+                   RenderWindow OPTIONS(VideoMode(800,600), "Options");
+                   RenderWindow ABOUT(VideoMode(800,600), "About");
+                   int x = mainMenu.MainMenuPressed();
+                   if(x == 0)
+                   {
+                       while(Play.isOpen())
+                       {
+                           Event avent;
+                           while(Play.pollEvent(avent))
+                           {
+                               if(avent.type == Event::Closed)
+                               {
+                                   Play.close();
+                               }
+                               if(life == 0){
+
+
+                                    RenderWindow GameOver(VideoMode(800,600), "Game Over");
+                                     while(GameOver.isOpen()){
+
+                                        Event evover;
+                                         while(GameOver.pollEvent(evover))
+                           {
+                               if(evover.type == Event::Closed)
+                               {
+                                   GameOver.close();
+                               }
+                                 if(evover.key.code == Keyboard::Escape)
+                                   {
+                                       GameOver.close();
+                                   }
+                                     }
+                                     Texture gameovertxt;
+                                     gameovertxt.loadFromFile("data/images/gameover.jpg");
+                                     Sprite gameoverspt(gameovertxt);
+                                     gameoverspt.scale(1.3,1.3);
+                                      gameoverspt.setPosition(-30,-200);
+                                     GameOver.clear();
+
+                                      GameOver.draw(gameoverspt);
+                                      textgameover.setString(gameoverstr+to_string(score));
+                                      GameOver.draw(textgameover);
+                                       GameOver.display();
+
+
+
+                            }
+
+                             score = 0;
+
+                                Play.close();
+
+                               }
+
+
+                               if(avent.type == Event::KeyPressed)
+                               {
+                                   if(avent.key.code == Keyboard::Escape)
+                                   {
+                                       Play.close();
+                                   }
+                               }
+                                if(Keyboard:: isKeyPressed(Keyboard::Space) ){ bulletsound.play();
                 bullarray.push_back(make_pair(SpriteSheet.getPosition().x + 10,SpriteSheet.getPosition().y+16));
             }
-        }
 
-        y = 0;
+                           }
+
+
+
+
+                           OPTIONS.close();
+                           ABOUT.close();
+                           y = 0;
         x =0;
         if(Keyboard::isKeyPressed(Keyboard::Up)){
                  if(SpriteSheet.getPosition().y>=0)
@@ -113,22 +250,7 @@ int main()
          else{
             ufoX1 -=1;
          }
-        /*  if(ufoX2<-100){
-            ufoX2 = 1000;
-           ufo2.setPosition(ufoX2,rand()%500);
 
-         }
-         else{
-            ufoX2 -=1;
-         }
-         if(ufoX3<-100){
-            ufoX3 =  1200;
-           ufo3.setPosition(ufoX3,rand()%500);
-
-         }
-         else{
-            ufoX3-=1;
-         }*/
          if(backgroundX2<0){
          backgroundX1 = 0;
          backgroundX2= backgroundX1 +765;
@@ -136,12 +258,12 @@ int main()
          backgroundX1-=.2;
         backgroundX2-=.2;
 
-        Window.clear();
+        Play.clear();
 
-         Window.draw(background2);
-  Window.draw(background1);
+         Play.draw(background2);
+  Play.draw(background1);
 
-       Window.draw(ufo1);
+       Play.draw(ufo1);
          // Window.draw(ufo2);
           // Window.draw(ufo3);
   if(!bullarray.empty()){
@@ -157,24 +279,21 @@ int main()
                 if(bullarray[i].first>=ufo1.getPosition().x && bullarray[i].first<=ufo1.getPosition().x+100 && (bullarray[i].second>=ufo1.getPosition().y-20 && bullarray[i].second<=ufo1.getPosition().y + 50)){
 
                     f = 1;
+                    score+=5;
                     collision.setPosition(bullarray[i].first+5,bullarray[i].second+5);
-                     coll2.setPosition(bullarray[i].first+5,bullarray[i].second+5);
+
                       coll3.setPosition(bullarray[i].first-4,bullarray[i].second-4);
+                      bulletsound2.play();
 
-                       bulletsound2.play();
+
                    for(int j=0;j<35;j++){
-                   Window.draw(collision);
-                      
+                   Play.draw(collision);
 
-                   Window.display();}
-                    /* for(int j=0;j<20;j++){
-                  Window.draw(coll2);
-                   Window.display();
-                     }*/
+                   Play.display();}
+
                   for(int j=0;j<35;j++){
-                    Window.draw(coll3);
-                     
-                   Window.display();
+                    Play.draw(coll3);
+                    Play.display();
                   }
 
                    ufo1.setPosition(900,rand()%500);
@@ -189,7 +308,7 @@ int main()
 
                 bullet.setPosition(Vector2f(bullarray[i].first, bullarray[i].second));
                 bullet.move(Vector2f(2,0));
-                Window.draw(bullet);
+                Play.draw(bullet);
 
             }
              if(f == 1){
@@ -197,13 +316,13 @@ int main()
 
             }
         }
-          Window.draw(SpriteSheet);
+          Play.draw(SpriteSheet);
 
           if(SpriteSheet.getPosition().x + 30 >= ufo1.getPosition().x && SpriteSheet.getPosition().x - 50 <= ufo1.getPosition().x && SpriteSheet.getPosition().y+ 60 >= ufo1.getPosition().y&& SpriteSheet.getPosition().y-70 <= ufo1.getPosition().y){
                    Sprite collision(collisiontxt);
                Sprite coll2(coll2txt);
                 Sprite coll3(coll3txt);
-
+               life--;
                collision.scale(.5,.5);
                coll3.scale(.7,.7);
               collision.setPosition(ufo1.getPosition().x-20,ufo1.getPosition().y-20);
@@ -213,24 +332,115 @@ int main()
                        ufo1.setPosition(900,rand()%500);
            ufoX1 = 900;
            SpriteSheet.setPosition(0,0);
-              bulletsound3.play();
+           bulletsound3.play();
              for(int j=0;j<35;j++){
-                   Window.draw(collision);
-                
+                   Play.draw(collision);
 
-                   Window.display();}
+                    Play.display();}
 
                   for(int j=0;j<35;j++){
-                    Window.draw(coll3);
-                     
-                   Window.display();
+                     Play.draw(coll3);
+                    Play.display();
                   }
           }
         SpriteSheet.move(x,y);
         ufo1.move(-1,0);
-        //ufo2.move(-1,0);
-       // ufo3.move(-1,0);
-        Window.display();
-    }
+       textscore.setString(scorestr+to_string(score));
+       textlife.setString(lifestr+to_string(life));
+       Play.draw(textscore);
+        Play.draw(textlife);
+        Play.display();
 
+                       }
+                   } //
+                       if(x == 1)
+                   {
+                       while(OPTIONS.isOpen())
+                       {
+                           Event avent;
+                           while(OPTIONS.pollEvent(avent))
+                           {
+                               if(avent.type == Event::Closed)
+                               {
+                                   OPTIONS.close();
+                               }
+                               if(avent.type == Event::KeyPressed)
+                               {
+                                   if(avent.key.code == Keyboard::Escape)
+                                   {
+                                       OPTIONS.close();
+                                   }
+
+
+                               }
+                                if(Keyboard::isKeyPressed(Keyboard::Up)){
+                                        if(level<3)
+                                        level++;
+                                    }
+                                if(Keyboard::isKeyPressed(Keyboard::Down)){
+                                        if(level>0)
+                                        level--;
+                                   }
+
+
+                           }
+                           Play.close();
+                           OPTIONS.clear();
+                           ABOUT.close();
+                            OPTIONS.draw(textlevelintro);
+                             textlevel.setString(levelstr+to_string(level+1));
+                             OPTIONS.draw(textlevel);
+
+                          OPTIONS.display();
+
+
+                       }
+                   }
+                       if(x == 2)
+                   {
+                       while(ABOUT.isOpen())
+                       {
+                           Event avent;
+                           while(ABOUT.pollEvent(avent))
+                           {
+                               if(avent.type == Event::Closed)
+                               {
+                                   ABOUT.close();
+                               }
+                               if(avent.type == Event::KeyPressed)
+                               {
+                                   if(avent.key.code == Keyboard::Escape)
+                                   {
+                                       ABOUT.close();
+                                   }
+                               }
+                           }
+                            Play.close();
+                           OPTIONS.clear();
+                           ABOUT.clear();
+
+                           ABOUT.display();
+
+
+                       }
+                   }
+                       if(x == 3)
+
+                      MENU.close();
+                      break;
+                   //
+
+
+                }
+            }
+        }
+
+        MENU.clear();
+        MENU.draw(background);
+        mainMenu.draw(MENU);
+        MENU.display();
+        life = 3;
+       //modification
+
+}
 }
